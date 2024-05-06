@@ -1,0 +1,61 @@
+version: '3.8'
+services:
+
+  website:
+    build: .
+    container_name: c_website
+    ports:
+      - 82:80
+    restart: always
+    networks:
+      - networks-ipam
+    volumes:
+      - web:/data/db
+    depends_on:
+      -  "mongodb"
+      -  "mongo-express"
+
+  mongodb:
+    image: mongo
+    container_name: c_mongo
+    restart: always
+    ports:
+     - 27017:27017
+    environment:
+     - MONGO_INITDB_ROOT_USERNAME=mond
+     - MONGO_INITDB_ROOT_PASSWORD=12345
+    volumes:
+      - db:/data/db
+    networks: 
+      -  networks-ipam
+
+  mongo-express:
+    image: mongo-express
+    container_name: c_mongo-express
+    restart: always
+    ports:
+     - 8081:8081
+    environment:
+     - ME_CONFIG_BASICAUTH_USERNAME=web
+     - ME_CONFIG_BASICAUTH_PASSWORD=12345
+     - ME_CONFIG_MONGODB_ADMINUSERNAME=mond
+     - ME_CONFIG_MONGODB_ADMINPASSWORD=12345        
+     - ME_CONFIG_MONGODB_SERVER=mongodb
+     - ME_CONFIG_REQUEST_SIZE=100kb
+    depends_on:
+     - "mongodb"
+    networks:
+      -  networks-ipam
+  
+
+volumes:
+    db:
+    web:
+
+networks:
+  networks-ipam:
+    ipam:
+      driver: default
+      config:
+         - subnet: 192.168.100.0/24
+ 
