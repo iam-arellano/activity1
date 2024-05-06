@@ -9,7 +9,7 @@ pipeline {
         SCANNER_HOME= tool 'sonar-scanner'                      
         
         /// THIS IS FOR DOCKER CRED TO PUSH 
-        APP_NAME = "activity"      
+        APP_NAME = "ubuntu-php"      
         RELEASE = "1.0.0"
         DOCKER_USER = "raemondarellano"
         DOCKER_PASS = 'jenkins-docker-credentials'              
@@ -31,38 +31,25 @@ pipeline {
                 }
         }
 
-    //     stage("Build Application"){
-    //         steps {
-    //             sh "mvn clean package"
-    //         }
-
-    //    }
-
-    //    stage("Test Application"){
-    //        steps {
-    //              sh "mvn test"
-    //        }
-    //    }
-
-       stage("SonarQube Analysis"){
+        stage("SonarQube Analysis"){
            steps {
 	           script {
 		        withSonarQubeEnv(credentialsId: 'sonarqube_access') { 
-    //                     sh "mvn sonar:sonar"
-                  sh 'mvn clean package sonar:sonar'
+                        sh "mvn sonar:sonar"
 		        }
 	           }	
            }
        }
 
-    //    stage("Quality Gate"){
-    //        steps {
-    //            script {
-    //                 waitForQualityGate abortPipeline: false, credentialsId: 'sonarqube_access'
-    //             }	
-    //         }
 
-    //     }
+         stage("Quality Gate"){
+           steps {
+               script {
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonarqube_access'
+                }	
+            }
+
+        }
 
         stage("Build & Push Docker Image") {
             steps {
@@ -82,7 +69,7 @@ pipeline {
         stage("Trivy Scan") {
            steps {
                script {
-	            sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image raemondarellano/activity:latest --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table')
+	            sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image raemondarellano/ubuntu-php:latest --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table')
                }
            }
        }
