@@ -44,15 +44,16 @@ pipeline {
     //        }
     //    }
 
-    //    stage("SonarQube Analysis"){
-    //        steps {
-	//            script {
-	// 	        withSonarQubeEnv(credentialsId: 'sonarqube_access') { 
+       stage("SonarQube Analysis"){
+           steps {
+	           script {
+		        withSonarQubeEnv(credentialsId: 'sonarqube_access') { 
     //                     sh "mvn sonar:sonar"
-	// 	        }
-	//            }	
-    //        }
-    //    }
+                  sh 'mvn clean package sonar:sonar'
+		        }
+	           }	
+           }
+       }
 
     //    stage("Quality Gate"){
     //        steps {
