@@ -7,13 +7,6 @@ pipeline {
                 git branch: 'main', changelog: false, poll: false, url: 'https://github.com/iam-arellano/activity1'
             }
         }
-
-         stage('Git Checkout ') {
-            steps {
-                git branch: 'main', changelog: false, poll: false, url: 'https://github.com/iam-arellano/activity1'
-            }
-        }
-
          stage("Sonarqube Analysis "){
              steps{
                  withSonarQubeEnv('sonarqube_server') {
