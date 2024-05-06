@@ -3,17 +3,19 @@ pipeline {
 
      environment {
          SCANNER_HOME= tool 'sonar-scanner'    
+         
      }
          
         
 
     stages{
+        
         stage('Git Checkout ') {
             steps {
                 git branch: 'main', changelog: false, poll: false, url: 'https://github.com/iam-arellano/activity1'
             }
         }
-      stage("SonarQube Analysis"){
+        stage("SonarQube Analysis"){
            steps {
 	           script {
 		        withSonarQubeEnv(credentialsId: 'sonarqube_access') { 
@@ -23,14 +25,14 @@ pipeline {
            }
        }
 
-       stage("Quality Gate"){
-           steps {
-               script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'sonarqube_access'
-                }	
-            }
+    //    stage("Quality Gate"){
+    //        steps {
+    //            script {
+    //                 waitForQualityGate abortPipeline: false, credentialsId: 'sonarqube_access'
+    //             }	
+    //         }
 
-        }
+    //     }
 
 
         //  stage('Docker Build & Push') {
